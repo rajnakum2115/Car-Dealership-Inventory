@@ -23,7 +23,8 @@ describe("Authentication API", () => {
 
         it("should register a new user successfully", async () => {
 
-            const email = `raj${Date.now()}@gmail.com`;
+            // const email = `raj${Date.now()}@gmail.com`;
+            const email = `raj${Date.now()}_${Math.floor(Math.random() * 100000)}@gmail.com`;
 
             const response = await request(app)
                 .post("/api/auth/register")
@@ -55,7 +56,8 @@ describe("Authentication API", () => {
 
         it("should login successfully with valid credentials", async () => {
 
-            const email = `raj${Date.now()}@gmail.com`;
+            // const email = `raj${Date.now()}@gmail.com`;
+            const email = `raj${Date.now()}_${Math.floor(Math.random() * 100000)}@gmail.com`;
 
             // First register the user
             await request(app)
@@ -72,6 +74,8 @@ describe("Authentication API", () => {
                     email,
                     password: "raj123"
                 });
+                console.log(response.statusCode);
+                console.log(response.body);
                 console.log(response.body);
             expect(response.statusCode).toBe(200);
 

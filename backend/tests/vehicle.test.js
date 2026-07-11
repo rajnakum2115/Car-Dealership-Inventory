@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import app from "../app.js";
+import User from "../models/User.js";
 
 dotenv.config();
 
@@ -145,12 +146,62 @@ describe("PUT /api/vehicles/:id", () => {
 
 });
 
-it("should deny delete access to normal user", async () => {
+describe("DELETE /api/vehicles/:id", () => {
 
-    const response = await request(app)
-        .delete(`/api/vehicles/${vehicleId}`)
-        .set("Authorization", `Bearer ${userToken}`);
+    it("should allow admin to delete vehicle", async () => {
 
-    expect(response.statusCode).toBe(403);
+        // Register an admin user
+        const email = `admin${Date.now()}${Math.floor(Math.random() * 10000)}@gmail.com`;
+
+        await request(app)
+            .post("/api/auth/register")
+            .send({
+                name: "Admin",
+                email,
+                password: "admin123"
+            });
+
+        // Change the user's role to admin
+        await User.findOneAndUpdate(
+            { email },
+            { role: "admin" }
+        );
+
+        // Login as admin
+        const loginResponse = await request(app)
+            .post("/api/auth/login")
+            .send({
+                email,
+                password: "admin123"
+            });
+
+        const adminToken = loginResponse.body.token;
+
+        // Create a vehicle
+        const vehicleResponse = await request(app)
+            .post("/api/vehicles")
+            .set("Authorization", `Bearer ${adminToken}`)
+            .send({
+                name: "Fortuner",
+                brand: "Toyota",
+                category: "SUV",
+                price: 4200000,
+                image: "https://example.com/car.jpg",
+                description: "Toyota Fortuner SUV",
+                quantity: 5
+            });
+
+        const vehicleId = vehicleResponse.body._id;
+
+        // Delete the vehicle
+        const response = await request(app)
+            .delete(`/api/vehicles/${vehicleId}`)
+            .set("Authorization", `Bearer ${adminToken}`);
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.message).toBe("Vehicle deleted successfully");
+
+    });
 
 });

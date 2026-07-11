@@ -66,14 +66,13 @@ describe("Authentication API", () => {
                     password: "raj123"
                 });
 
-            // Then login
             const response = await request(app)
                 .post("/api/auth/login")
                 .send({
                     email,
                     password: "raj123"
                 });
-
+                console.log(response.body);
             expect(response.statusCode).toBe(200);
 
             expect(response.body.user).toBeDefined();

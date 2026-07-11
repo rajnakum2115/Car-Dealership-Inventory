@@ -259,3 +259,63 @@ describe("POST /api/vehicles/:id/purchase", () => {
     });
 
 });
+
+describe("POST /api/vehicles/:id/restock", () => {
+
+    it("should allow admin to restock vehicle", async () => {
+
+        const email = `admin${Date.now()}_${Math.floor(Math.random()*10000)}@gmail.com`;
+
+        await request(app)
+            .post("/api/auth/register")
+            .send({
+                name:"Admin",
+                email,
+                password:"admin123"
+            });
+
+        await User.findOneAndUpdate(
+            { email },
+            {
+                role:"admin"
+            }
+        );
+
+        const login = await request(app)
+            .post("/api/auth/login")
+            .send({
+                email,
+                password:"admin123"
+            });
+
+        const adminToken = login.body.token;
+
+        const createdVehicle = await request(app)
+            .post("/api/vehicles")
+            .set("Authorization",`Bearer ${adminToken}`)
+            .send({
+                name:"Fortuner",
+                brand:"Toyota",
+                category:"SUV",
+                price:4200000,
+                image:"https://example.com/car.jpg",
+                description:"SUV",
+                quantity:5
+            });
+
+        const vehicleId = createdVehicle.body._id;
+
+        const response = await request(app)
+            .post(`/api/vehicles/${vehicleId}/restock`)
+            .set("Authorization",`Bearer ${adminToken}`)
+            .send({
+                quantity:5
+            });
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.quantity).toBe(10);
+
+    });
+
+});

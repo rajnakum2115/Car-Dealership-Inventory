@@ -52,9 +52,16 @@ const updateVehicle = async (id, data) => {
 
 };
 
+const deleteVehicle = async (id) => {
+
+    return await Vehicle.findByIdAndDelete(id);
+
+};
+
 export {
     getVehicles,
     addVehicle,
     searchVehicles,
-    updateVehicle
+    updateVehicle,
+    deleteVehicle
 };

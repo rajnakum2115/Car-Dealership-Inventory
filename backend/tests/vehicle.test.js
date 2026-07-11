@@ -1,0 +1,40 @@
+import request from "supertest";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+import app from "../app.js";
+
+dotenv.config();
+
+beforeAll(async () => {
+    await mongoose.connect(process.env.MONGODB_URL);
+});
+
+afterAll(async () => {
+    await mongoose.connection.close();
+});
+
+describe("POST /api/vehicles", () => {
+
+    it("should create a vehicle", async () => {
+
+        const res = await request(app)
+            .post("/api/vehicles")
+            .send({
+                name: "Fortuner",
+                brand: "Toyota",
+                category: "SUV",
+                price: 4200000,
+                image: "https://example.com/toyota.jpg",
+                description: "Toyota Fortuner SUV",
+                quantity: 5
+            });
+
+        console.log(res.statusCode);
+        console.log(res.body);
+
+        expect(res.statusCode).toBe(201);
+
+    });
+
+});

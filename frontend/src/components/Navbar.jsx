@@ -14,13 +14,21 @@ function Navbar() {
 
     return (
 
-        <nav className="bg-slate-900 text-white flex justify-between items-center px-10 py-5">
+        <nav className="bg-slate-900 text-white flex justify-between items-center px-10 py-4">
 
-            <h1 className="text-3xl font-bold">
+        <div className="flex items-center gap-3">
 
+            <img
+                src="/images/logo.jpg"
+                alt="CarDealer Logo"
+                className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
+            />
+
+            <h1 className="text-4xl font-bold">
                 CarDealer
-
             </h1>
+
+        </div>
 
             <div className="flex items-center gap-8">
 

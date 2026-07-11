@@ -92,6 +92,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 function App() {
 
@@ -121,6 +123,16 @@ function App() {
                 <Route
                     path="/register"
                     element={!token ? <Register /> : <Navigate to="/" replace />}
+                />
+
+                <Route
+                    path="/about"
+                    element={token ? <About /> : <Navigate to="/login" replace />}
+                />
+
+                <Route
+                    path="/contact"
+                    element={token ? <Contact /> : <Navigate to="/login" replace />}
                 />
 
             </Routes>

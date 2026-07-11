@@ -6,9 +6,9 @@ import app from './app.js'
 dotenv.config()
 let port=process.env.PORT || 6000
 
-let app = express()
 
 app.listen(port,()=>{
     console.log("Hello from server")
+    console.log(`Server is running on port ${port}`);
     connectDb()
 })

@@ -53,3 +53,12 @@ describe("GET /api/vehicles", () => {
     });
 
 });
+
+describe("GET /api/vehicles/search", () => {
+    it("should search vehicles by category", async () => {
+        const response = await request(app)
+            .get("/api/vehicles/search?category=SUV");
+
+        expect(response.statusCode).toBe(200);
+    });
+});

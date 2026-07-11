@@ -4,7 +4,8 @@ import {
     searchVehicles,
     updateVehicle,
     deleteVehicle,
-    purchaseVehicle
+    purchaseVehicle,
+    restockVehicle
 } from "../services/vehicleService.js";
 
 const getAllVehicles = async (req, res) => {
@@ -140,11 +141,35 @@ const purchaseVehicleController = async (req, res) => {
 
 };
 
+const restockVehicleController = async (req, res) => {
+
+    try {
+
+        const vehicle = await restockVehicle(
+            req.params.id,
+            req.body.quantity
+        );
+
+        res.status(200).json(vehicle);
+
+    }
+
+    catch (error) {
+
+        res.status(400).json({
+            message:error.message
+        });
+
+    }
+
+};
+
 export {
     getAllVehicles,
     createVehicle,
     searchVehicle,
     updateVehicleDetails,
     removeVehicle,
-    purchaseVehicleController
+    purchaseVehicleController,
+    restockVehicleController
 };

@@ -76,11 +76,27 @@ const purchaseVehicle = async (id) => {
 
 };
 
+const restockVehicle = async (id, quantity) => {
+
+    const vehicle = await Vehicle.findById(id);
+
+    if (!vehicle)
+        throw new Error("Vehicle not found");
+
+    vehicle.quantity += quantity;
+
+    await vehicle.save();
+
+    return vehicle;
+
+};
+
 export {
     getVehicles,
     addVehicle,
     searchVehicles,
     updateVehicle,
     deleteVehicle,
-    purchaseVehicle
+    purchaseVehicle,
+    restockVehicle
 };

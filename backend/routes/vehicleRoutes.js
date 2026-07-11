@@ -5,7 +5,8 @@ import {
     createVehicle,
     searchVehicle,
     updateVehicleDetails,
-    removeVehicle
+    removeVehicle,
+    purchaseVehicleController
 } from "../controllers/vehicleController.js";
 
 import protect from "../middleware/authMiddleware.js";
@@ -29,6 +30,12 @@ router.delete(
     protect,
     adminMiddleware,
     removeVehicle
+);
+
+router.post(
+    "/:id/purchase",
+    protect,
+    purchaseVehicleController
 );
 
 export default router;

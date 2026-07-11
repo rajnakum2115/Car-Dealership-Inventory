@@ -58,10 +58,29 @@ const deleteVehicle = async (id) => {
 
 };
 
+const purchaseVehicle = async (id) => {
+
+    const vehicle = await Vehicle.findById(id);
+
+    if (!vehicle)
+        throw new Error("Vehicle not found");
+
+    if (vehicle.quantity <= 0)
+        throw new Error("Vehicle out of stock");
+
+    vehicle.quantity -= 1;
+
+    await vehicle.save();
+
+    return vehicle;
+
+};
+
 export {
     getVehicles,
     addVehicle,
     searchVehicles,
     updateVehicle,
-    deleteVehicle
+    deleteVehicle,
+    purchaseVehicle
 };

@@ -1,18 +1,44 @@
 import request from "supertest";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
 import app from "../app.js";
+
+dotenv.config();
+
+beforeAll(async () => {
+    await mongoose.connect(process.env.MONGODB_URL);
+});
+
+afterAll(async () => {
+    await mongoose.connection.close();
+});
 
 describe("Authentication API", () => {
     describe("POST /api/auth/register", () => {
         it("should register a new user successfully", async () => {
-            const response = await request(app)
-                .post("/api/auth/register")
-                .send({
-                    name: "Raj",
-                    email: "raj@gmail.com",
-                    password: "raj123"
-                });
 
-            expect(response.statusCode).toBe(201);
+    const email = `raj${Date.now()}@gmail.com`;
+
+    const response = await request(app)
+        .post("/api/auth/register")
+        .send({
+            name: "Raj",
+            email,
+            password: "raj123"
         });
+
+    expect(response.statusCode).toBe(201);
+
+    expect(response.body.user).toBeDefined();
+
+    expect(response.body.user.name).toBe("Raj");
+
+    expect(response.body.user.email).toBe(email);
+
+    expect(response.body.user.role).toBe("user");
+
+    expect(response.body.user.password).toBeUndefined();
+});
     });
 });

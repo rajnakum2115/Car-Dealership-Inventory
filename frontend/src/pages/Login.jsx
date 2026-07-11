@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
 function Login() {
-
-    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -12,10 +10,12 @@ function Login() {
     });
 
     const handleChange = (e) => {
+
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+
     };
 
     const handleSubmit = async (e) => {
@@ -26,16 +26,18 @@ function Login() {
 
             const data = await loginUser(formData);
 
-            // Save token
+            console.log("Login Response:", data);
+
+            // Save JWT token
             localStorage.setItem("token", data.token);
 
-            // Optional: Save user information
+            // Save user data
             localStorage.setItem("user", JSON.stringify(data.user));
 
             alert("Login Successful");
 
-            // Navigate to Home page
-            navigate("/home");
+            // Reload application
+            window.location.href = "/home";
 
         } catch (error) {
 
@@ -82,7 +84,7 @@ function Login() {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
                     >
                         Login
                     </button>
@@ -90,13 +92,16 @@ function Login() {
                 </form>
 
                 <p className="mt-6 text-center">
+
                     Don't have an account?
+
                     <Link
                         to="/register"
                         className="text-blue-600 ml-2 font-semibold hover:underline"
                     >
                         Register
                     </Link>
+
                 </p>
 
             </div>

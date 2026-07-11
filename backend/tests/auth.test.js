@@ -84,4 +84,16 @@ describe("Authentication API", () => {
 
     });
 
+    describe("GET /api/auth/profile", () => {
+
+        it("should deny access without JWT token", async () => {
+
+            const response = await request(app)
+                .get("/api/auth/profile");
+
+            expect(response.statusCode).toBe(401);
+
+        });
+    });
+
 });

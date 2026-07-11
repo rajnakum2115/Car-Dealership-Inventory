@@ -205,3 +205,57 @@ describe("DELETE /api/vehicles/:id", () => {
     });
 
 });
+
+describe("POST /api/vehicles/:id/purchase", () => {
+
+    it("should purchase a vehicle and decrease quantity", async () => {
+
+        // Register user
+        const email = `raj${Date.now()}_${Math.floor(Math.random() * 10000)}@gmail.com`;
+
+        await request(app)
+            .post("/api/auth/register")
+            .send({
+                name: "Raj",
+                email,
+                password: "raj123"
+            });
+
+        // Login
+        const login = await request(app)
+            .post("/api/auth/login")
+            .send({
+                email,
+                password: "raj123"
+            });
+
+        const token = login.body.token;
+
+        // Create vehicle
+        const createdVehicle = await request(app)
+            .post("/api/vehicles")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Fortuner",
+                brand: "Toyota",
+                category: "SUV",
+                price: 4200000,
+                image: "https://example.com/car.jpg",
+                description: "SUV",
+                quantity: 5
+            });
+
+        const vehicleId = createdVehicle.body._id;
+
+        // Purchase
+        const response = await request(app)
+            .post(`/api/vehicles/${vehicleId}/purchase`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.quantity).toBe(4);
+
+    });
+
+});

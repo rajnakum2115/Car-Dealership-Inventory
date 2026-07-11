@@ -8,7 +8,39 @@ const addVehicle = async (data) => {
     return await Vehicle.create(data);
 };
 
+const searchVehicles = async (query) => {
+
+    const filter = {};
+
+    if (query.brand) {
+        filter.brand = { $regex: query.brand, $options: "i" };
+    }
+
+    if (query.name) {
+        filter.name = { $regex: query.name, $options: "i" };
+    }
+
+    if (query.category) {
+        filter.category = { $regex: query.category, $options: "i" };
+    }
+
+    if (query.minPrice || query.maxPrice) {
+
+        filter.price = {};
+
+        if (query.minPrice)
+            filter.price.$gte = Number(query.minPrice);
+
+        if (query.maxPrice)
+            filter.price.$lte = Number(query.maxPrice);
+    }
+
+    return await Vehicle.find(filter);
+
+};
+
 export {
     getVehicles,
-    addVehicle
+    addVehicle,
+    searchVehicles
 };

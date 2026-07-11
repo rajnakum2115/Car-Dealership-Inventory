@@ -1,6 +1,7 @@
 import {
     getVehicles,
-    addVehicle
+    addVehicle,
+    searchVehicles
 } from "../services/vehicleService.js";
 
 const getAllVehicles = async (req, res) => {
@@ -41,7 +42,26 @@ const createVehicle = async (req, res) => {
     }
 };
 
+const searchVehicle = async (req, res) => {
+
+    try {
+
+        const vehicles = await searchVehicles(req.query);
+
+        res.status(200).json(vehicles);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+
+};
+
 export {
     getAllVehicles,
-    createVehicle
+    createVehicle,
+    searchVehicle
 };

@@ -1,12 +1,15 @@
 import express from "express";
 import {
     getAllVehicles,
-    createVehicle
+    createVehicle,
+    searchVehicle
 } from "../controllers/vehicleController.js";
 
 const router = express.Router();
 
 router.get("/", getAllVehicles);
+
+router.get("/search", searchVehicle);
 
 router.post("/", createVehicle);
 

@@ -68,3 +68,37 @@ describe("GET /api/vehicles/search", () => {
     });
 
 });
+
+describe("PUT /api/vehicles/:id", () => {
+
+    it("should update a vehicle", async () => {
+
+        // Create a vehicle first
+        const createdVehicle = await request(app)
+            .post("/api/vehicles")
+            .send({
+                name: "Fortuner",
+                brand: "Toyota",
+                category: "SUV",
+                price: 4200000,
+                image: "https://example.com/toyota.jpg",
+                description: "Toyota Fortuner SUV",
+                quantity: 5
+            });
+
+        const response = await request(app)
+            .put(`/api/vehicles/${createdVehicle.body._id}`)
+            .send({
+                price: 4500000,
+                quantity: 10
+            });
+
+        expect(response.statusCode).toBe(200);
+
+        expect(response.body.price).toBe(4500000);
+
+        expect(response.body.quantity).toBe(10);
+
+    });
+
+});

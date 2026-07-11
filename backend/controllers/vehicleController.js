@@ -1,7 +1,8 @@
 import {
     getVehicles,
     addVehicle,
-    searchVehicles
+    searchVehicles,
+    updateVehicle
 } from "../services/vehicleService.js";
 
 const getAllVehicles = async (req, res) => {
@@ -60,8 +61,38 @@ const searchVehicle = async (req, res) => {
 
 };
 
+const updateVehicleDetails = async (req, res) => {
+
+    try {
+
+        const vehicle = await updateVehicle(
+            req.params.id,
+            req.body
+        );
+
+        if (!vehicle) {
+
+            return res.status(404).json({
+                message: "Vehicle not found"
+            });
+
+        }
+
+        res.status(200).json(vehicle);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+
+};
+
 export {
     getAllVehicles,
     createVehicle,
-    searchVehicle
+    searchVehicle,
+    updateVehicleDetails
 };

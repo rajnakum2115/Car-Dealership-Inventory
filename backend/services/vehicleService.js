@@ -39,8 +39,22 @@ const searchVehicles = async (query) => {
 
 };
 
+const updateVehicle = async (id, data) => {
+
+    return await Vehicle.findByIdAndUpdate(
+        id,
+        data,
+        {
+            new: true,
+            runValidators: true
+        }
+    );
+
+};
+
 export {
     getVehicles,
     addVehicle,
-    searchVehicles
+    searchVehicles,
+    updateVehicle
 };

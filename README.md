@@ -125,27 +125,27 @@ npm run preview
 
 ### Primary screenshots
 
-![Home screenshot](/images/screenshot-1.png)
+![Home screenshot](frontend/public/images/screenshot-1.png)
 
-![Details screenshot](/images/screenshot-2.png)
+![Details screenshot](frontend/public/images/screenshot-2.png)
 
-![Admin orders screenshot](/images/screenshot-3.png)
+![Admin orders screenshot](frontend/public/images/screenshot-3.png)
 
 ### Additional screenshots
 
-![Homepage](/images/Homepage.png)
-![Vehicles section](/images/Vehicles_section.png)
-![Vehicle edit](/images/Vehicles_edit.png)
-![Signup](/images/Signup.png)
-![Login](/images/login.png)
-![Reset password](/images/Reset_password.png)
-![Profile section](/images/profile_section.png)
-![Add vehicles](/images/Add_Vehicles.png)
-![Admin dashboard](/images/Admin_Dashboard.png)
-![My orders (user)](/images/My_order_user.png)
-![Restock vehicles](/images/Restock_Vehicles.png)
-![Contact us](/images/Contact_us.png)
-![About us](/images/About_us.png)
+![Homepage](frontend/public/images/Homepage.png)
+![Vehicles section](frontend/public/images/Vehicles_section.png)
+![Vehicle edit](frontend/public/images/Vehicles_edit.png)
+![Signup](frontend/public/images/Signup.png)
+![Login](frontend/public/images/login.png)
+![Reset password](frontend/public/images/Reset_password.png)
+![Profile section](frontend/public/images/profile_section.png)
+![Add vehicles](frontend/public/images/Add_Vehicles.png)
+![Admin dashboard](frontend/public/images/Admin_Dashboard.png)
+![My orders (user)](frontend/public/images/My_order_user.png)
+![Restock vehicles](frontend/public/images/Restock_Vehicles.png)
+![Contact us](frontend/public/images/Contact_us.png)
+![About us](frontend/public/images/About_us.png)
 
 
 

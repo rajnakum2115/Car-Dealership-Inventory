@@ -1,8 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import { loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
+
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -26,22 +32,16 @@ function Login() {
 
             const data = await loginUser(formData);
 
-            console.log("Login Response:", data);
+            // Persist auth state via context (writes to localStorage too).
+            login(data.token, data.user);
 
-            // Save JWT token
-            localStorage.setItem("token", data.token);
+            toast.success("Login Successful");
 
-            // Save user data
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            alert("Login Successful");
-
-            // Reload application
-            window.location.href = "/home";
+            navigate("/home");
 
         } catch (error) {
 
-            alert(error.response?.data?.message || "Login Failed");
+            toast.error(error.response?.data?.message || "Login Failed");
 
         }
 

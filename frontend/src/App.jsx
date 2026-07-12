@@ -1,92 +1,3 @@
-// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-// import Home from "./pages/Home";
-// import Login from "./pages/Login";
-// import Register from "./pages/Register";
-
-// function App() {
-//     return (
-//         <BrowserRouter>
-//             <Routes>
-
-//                 <Route
-//                     path="/"
-//                     element={<Navigate to="/login" replace />}
-//                 />
-
-//                 <Route
-//                     path="/login"
-//                     element={<Login />}
-//                 />
-
-//                 <Route
-//                     path="/register"
-//                     element={<Register />}
-//                 />
-
-//                 <Route
-//                     path="/home"
-//                     element={<Home />}
-//                 />
-
-//             </Routes>
-//         </BrowserRouter>
-//     );
-// }
-
-// export default App;
-
-
-// // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-// // import Home from "./pages/Home";
-// // import Login from "./pages/Login";
-// // import Register from "./pages/Register";
-
-// // function App() {
-
-// //     const token = localStorage.getItem("token");
-
-// //     return (
-
-// //         <BrowserRouter>
-
-// //             <Routes>
-
-// //                 <Route
-// //                     path="/"
-// //                     element={
-// //                         token ? <Home /> : <Navigate to="/login" />
-// //                     }
-// //                 />
-
-// //                 <Route
-// //                     path="/login"
-// //                     element={
-// //                         token ? <Navigate to="/" /> : <Login />
-// //                     }
-// //                 />
-
-// //                 <Route
-// //                     path="/register"
-// //                     element={
-// //                         token ? <Navigate to="/" /> : <Register />
-// //                     }
-// //                 />
-
-// //             </Routes>
-
-// //         </BrowserRouter>
-
-// //     );
-
-// // }
-
-// // export default App;
-
-
-
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -94,10 +5,40 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Vehicles from "./pages/Vehicles";
+import VehicleDetails from "./pages/VehicleDetails";
+import AdminDashboard from "./pages/AdminDashboard";
+import AddVehicle from "./pages/AddVehicle";
+import EditVehicle from "./pages/EditVehicle";
+import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
+import MyOrders from "./pages/MyOrders";
+import AdminOrders from "./pages/AdminOrders";
+
+import { useAuth } from "./context/AuthContext";
+
+// Wraps a page that requires a logged-in user.
+const ProtectedRoute = ({ children }) => {
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+// Wraps a page that requires an admin user (client-side guard; the backend
+// enforces adminMiddleware independently).
+const AdminRoute = ({ children }) => {
+    const { isAuthenticated, isAdmin } = useAuth();
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!isAdmin) return <Navigate to="/" replace />;
+    return children;
+};
+
+// Public-only pages (login/register) — redirect away if already logged in.
+const GuestRoute = ({ children }) => {
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated ? <Navigate to="/" replace /> : children;
+};
 
 function App() {
-
-    const token = localStorage.getItem("token");
 
     return (
 
@@ -105,35 +46,29 @@ function App() {
 
             <Routes>
 
-                <Route
-                    path="/"
-                    element={token ? <Home /> : <Navigate to="/login" replace />}
-                />
+                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
-                <Route
-                    path="/home"
-                    element={token ? <Home /> : <Navigate to="/login" replace />}
-                />
+                <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+                <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
 
-                <Route
-                    path="/login"
-                    element={!token ? <Login /> : <Navigate to="/" replace />}
-                />
+                <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
+                <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
 
-                <Route
-                    path="/register"
-                    element={!token ? <Register /> : <Navigate to="/" replace />}
-                />
+                <Route path="/vehicles" element={<ProtectedRoute><Vehicles /></ProtectedRoute>} />
+                <Route path="/vehicles/:id" element={<ProtectedRoute><VehicleDetails /></ProtectedRoute>} />
 
-                <Route
-                    path="/about"
-                    element={token ? <About /> : <Navigate to="/login" replace />}
-                />
+                <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                <Route path="/admin/add" element={<AdminRoute><AddVehicle /></AdminRoute>} />
+                <Route path="/admin/edit/:id" element={<AdminRoute><EditVehicle /></AdminRoute>} />
+                <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
 
-                <Route
-                    path="/contact"
-                    element={token ? <Contact /> : <Navigate to="/login" replace />}
-                />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+
+                <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+
+                <Route path="*" element={<Navigate to="/" replace />} />
 
             </Routes>
 

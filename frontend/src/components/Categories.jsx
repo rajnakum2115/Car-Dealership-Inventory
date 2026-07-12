@@ -3,27 +3,27 @@ function Categories() {
     const categories = [
         {
             name: "SUV",
-            image: "/images/activa.jpg"
+            image: "/images/hyundai_creta_suv.jpg"
         },
         {
             name: "Sedan",
-            image: "/images/honda-shine.jpg"
+            image: "/images/Honda_City_sedan.jpg"
         },
         {
             name: "Hatchback",
-            image: "/images/toyota.jpg"
+            image: "/images/tata_altroz_hatchback.jpg"
         },
         {
             name: "Electric",
-            image: "/images/honda-activa-ev.jpeg"
+            image: "/images/MG_ZS_electric.jpg"
         },
         {
             name: "Luxury",
-            image: "/images/rolls-royce.jpg"
+            image: "/images/mercedes-benz-luxury.jpg"
         },
         {
             name: "Sports",
-            image: "/images/ferrari.jpg"
+            image: "/images/porsche_sports.jpg"
         }
     ];
 

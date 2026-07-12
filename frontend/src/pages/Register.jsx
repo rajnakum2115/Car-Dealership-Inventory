@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import { registerUser } from "../services/authService";
 
 function Register() {
@@ -27,16 +29,14 @@ function Register() {
 
             await registerUser(formData);
 
-            alert("Registration Successful");
+            toast.success("Registration Successful");
 
             navigate("/login");
 
         } catch (error) {
-    console.log(error);
-    console.log(error.response);
 
-    alert(error.response?.data?.message || "Registration Failed");
-}
+            toast.error(error.response?.data?.message || "Registration Failed");
+        }
 
     };
 

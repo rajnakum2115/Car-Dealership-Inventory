@@ -7,22 +7,22 @@ function Testimonials() {
     const testimonials = [
 
         {
-            name: "Raj Patel",
-            image: "/images/hyundai.jpg",
+            name: "Raj Nakum",
+            image: "/images/male1.jpg",
             review:
                 "Excellent service. The vehicle quality exceeded my expectations."
         },
 
         {
             name: "Priya Shah",
-            image: "/images/toyota.jpg",
+            image: "/images/female1.png",
             review:
                 "Very smooth buying experience. Highly recommended dealership."
         },
 
         {
             name: "Amit Kumar",
-            image: "/images/activa.jpg",
+            image: "/images/male2.jpg",
             review:
                 "Affordable prices and professional staff. I found my dream car."
         }

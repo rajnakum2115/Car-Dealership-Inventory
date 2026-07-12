@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { getVehicles } from "../services/vehicleService";
+
+import getImageSrc from "../utils/imageUrl";
+import { formatINR } from "../utils/price";
+import Spinner from "./Spinner";
 
 function LatestVehicles() {
 
     const [vehicles, setVehicles] = useState([]);
 
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -35,17 +43,7 @@ function LatestVehicles() {
     }, []);
 
     if (loading) {
-
-        return (
-
-            <div className="text-center py-10">
-
-                Loading Latest Vehicles...
-
-            </div>
-
-        );
-
+        return <Spinner label="Loading latest vehicles..." />;
     }
 
     return (
@@ -86,7 +84,7 @@ function LatestVehicles() {
                             >
 
                                 <img
-                                    src={`/images/${vehicle.image}`}
+                                    src={getImageSrc(vehicle.image)}
                                     alt={vehicle.name}
                                     className="w-full h-56 object-cover"
                                 />
@@ -107,12 +105,13 @@ function LatestVehicles() {
 
                                     <h4 className="text-blue-600 font-bold text-xl mt-3">
 
-                                        ₹ {vehicle.price.toLocaleString()}
+                                        ₹ {formatINR(vehicle.price)}
 
                                     </h4>
 
                                     <button
-                                        className="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg"
+                                        onClick={() => navigate(`/vehicles/${vehicle._id}`)}
+                                        className="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition"
                                     >
 
                                         View Details

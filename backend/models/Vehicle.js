@@ -19,7 +19,9 @@ const vehicleSchema = new mongoose.Schema(
 
         price: {
             type: Number,
-            required: true
+            required: true,
+            // Store whole rupees only — avoids float drift like 250000 → 249998.
+            set: (value) => Math.round(Number(value))
         },
 
         image: {
@@ -34,6 +36,21 @@ const vehicleSchema = new mongoose.Schema(
         quantity: {
             type: Number,
             default: 1
+        },
+
+        fuel: {
+            type: String,
+            default: ""
+        },
+
+        transmission: {
+            type: String,
+            default: ""
+        },
+
+        year: {
+            type: Number,
+            default: null
         }
     },
     {

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getVehicles } from "../services/vehicleService";
 
 import VehicleCard from "./VehicleCard";
+import Spinner from "./Spinner";
 
 function FeaturedVehicles() {
 
@@ -42,19 +43,7 @@ function FeaturedVehicles() {
     }, []);
 
     if (loading) {
-
-        return (
-
-            <div className="text-center py-20">
-
-                <h2 className="text-2xl font-semibold">
-                    Loading Vehicles...
-                </h2>
-
-            </div>
-
-        );
-
+        return <Spinner label="Loading vehicles..." />;
     }
 
     if (error) {
@@ -98,7 +87,7 @@ function FeaturedVehicles() {
                     </div>
 
                     <button
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
                     >
                         View All
                     </button>

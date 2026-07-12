@@ -84,7 +84,10 @@ describe("GET /api/vehicles/search", () => {
 
         expect(response.statusCode).toBe(200);
 
-        expect(Array.isArray(response.body)).toBe(true);
+        // Search now returns a paginated result object.
+        expect(response.body.vehicles).toBeDefined();
+
+        expect(Array.isArray(response.body.vehicles)).toBe(true);
 
     });
 
@@ -141,6 +144,15 @@ describe("PUT /api/vehicles/:id", () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body.price).toBe(4500000);
+
+        // Regression: whole-rupee prices must not drift (e.g. 250000 → 249998).
+        const priceFix = await request(app)
+            .put(`/api/vehicles/${vehicleId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({ price: 250000 });
+
+        expect(priceFix.statusCode).toBe(200);
+        expect(priceFix.body.price).toBe(250000);
 
     });
 

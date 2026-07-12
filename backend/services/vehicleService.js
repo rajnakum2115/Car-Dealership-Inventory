@@ -122,7 +122,8 @@ const updateVehicle = async (id, data) => {
         id,
         data,
         {
-            new: true,
+            // `new` is deprecated in recent Mongoose versions — use `returnDocument`.
+            returnDocument: "after",
             runValidators: true
         }
     );
@@ -134,7 +135,7 @@ const deleteVehicle = async (id) => {
 
 // Purchasing a vehicle decrements its stock AND records a Purchase row so
 // the user can see it in "My Orders" and admins can see it in Orders.
-const purchaseVehicle = async (id, userId) => {
+const purchaseVehicle = async (id, userId, userName) => {
     const vehicle = await Vehicle.findById(id);
 
     if (!vehicle)
@@ -154,6 +155,7 @@ const purchaseVehicle = async (id, userId) => {
             brand: vehicle.brand,
             image: vehicle.image
         },
+        buyerName: userName || "",
         price: vehicle.price,
         quantity: 1
     });

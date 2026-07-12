@@ -30,10 +30,40 @@ function AddVehicle() {
     const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (e) => {
-        setVehicle({
-            ...vehicle,
-            [e.target.name]: e.target.value
-        });
+        const { name, value } = e.target;
+        console.log("[Vehicle] field change", { name, value, currentPrice: vehicle.price });
+        setVehicle((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handlePriceChange = (e) => {
+        const rawValue = e.target.value;
+        const sanitizedValue = parsePriceInput(rawValue);
+
+        console.log("[Vehicle Price] add form input", { rawValue, sanitizedValue });
+
+        setVehicle((prev) => ({
+            ...prev,
+            price: sanitizedValue
+        }));
+    };
+
+    const handlePriceFocus = (e) => {
+        console.log("[Vehicle Price] add focus", { value: e.target.value });
+    };
+
+    const handlePriceBlur = (e) => {
+        const raw = e.target.value;
+        const sanitized = parsePriceInput(raw);
+        console.log("[Vehicle Price] add blur", { raw, sanitized });
+
+        // Re-apply deterministic integer value on blur to avoid downstream drift
+        setVehicle((prev) => ({
+            ...prev,
+            price: sanitized
+        }));
     };
 
     const handleFileChange = (e) => {
@@ -59,6 +89,10 @@ function AddVehicle() {
 
             // Feature 5 — send as FormData for multipart upload
             const formData = new FormData();
+            console.log("[Vehicle Price] add submit state", {
+                rawPrice: vehicle.price,
+                parsedPrice: parsePriceInput(vehicle.price)
+            });
 
             formData.append("name", vehicle.name);
             formData.append("brand", vehicle.brand);
@@ -167,8 +201,12 @@ function AddVehicle() {
                             name="price"
                             min="0"
                             step="1"
+                            inputMode="numeric"
+                            value={vehicle.price ?? ""}
                             placeholder="Price"
-                            onChange={handleChange}
+                            onChange={handlePriceChange}
+                            onFocus={handlePriceFocus}
+                            onBlur={handlePriceBlur}
                             className="border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />

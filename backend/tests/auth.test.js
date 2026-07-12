@@ -1,17 +1,20 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 import app from "../app.js";
 
-dotenv.config();
+let mongoServer;
 
 beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URL);
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
 });
 
 afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
+    if (mongoServer) await mongoServer.stop();
 });
 
 describe("Authentication API", () => {

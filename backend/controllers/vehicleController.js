@@ -63,6 +63,11 @@ const createVehicle = async (req, res) => {
     try {
         const body = req.body;
 
+        console.log("[Vehicle Price] create controller received", {
+            rawPrice: body.price,
+            body
+        });
+
         // multer populates req.file when an image is uploaded.
         const imageUrl = await handleImageUpload(req.file);
 
@@ -109,6 +114,11 @@ const updateVehicleDetails = async (req, res) => {
     try {
         const body = req.body;
 
+        console.log("[Vehicle Price] update controller received", {
+            rawPrice: body.price,
+            body
+        });
+
         // Only overwrite fields that were actually provided so partial
         // updates (e.g. just the price) don't wipe the other values.
         const data = {};
@@ -124,7 +134,12 @@ const updateVehicleDetails = async (req, res) => {
         });
 
         if (body.price !== undefined && body.price !== "") {
-            data.price = parsePrice(body.price);
+            const parsedPrice = parsePrice(body.price);
+            data.price = parsedPrice;
+            console.log("[Vehicle Price] update controller parsed", {
+                rawPrice: body.price,
+                parsedPrice
+            });
         }
 
         ["quantity", "year"].forEach((field) => {
@@ -194,7 +209,12 @@ const purchaseVehicleController = async (req, res) => {
 
     try {
 
-        const vehicle = await purchaseVehicle(req.params.id, req.user._id);
+        // Prevent admin users from making storefront purchases.
+        if (req.user?.role === "admin") {
+            return res.status(403).json({ message: "Admin users are not allowed to purchase vehicles" });
+        }
+
+        const vehicle = await purchaseVehicle(req.params.id, req.user._id, req.user.name);
 
         res.status(200).json(vehicle);
 

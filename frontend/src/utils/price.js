@@ -1,17 +1,18 @@
 /**
  * Normalises user/API price input to a whole rupee integer.
+ * Keeps the value deterministic even when the browser exposes floating-point
+ * numbers from number inputs or arrow-key changes.
  */
 export const parsePriceInput = (value) => {
     if (value === "" || value === null || value === undefined) {
         return "";
     }
 
-    const cleaned = String(value).trim().replace(/[₹,\s]/g, "");
-    if (cleaned === "") return "";
+    const cleaned = String(value).trim().replace(/[^0-9.-]/g, "");
+    if (cleaned === "" || cleaned === "." || cleaned === "-") return "";
 
-    // Use parseFloat to accept decimal input but store/display whole rupees.
-    const num = parseFloat(cleaned);
-    if (Number.isNaN(num)) return "";
+    const num = Number(cleaned);
+    if (!Number.isFinite(num)) return "";
 
     return Math.round(num);
 };

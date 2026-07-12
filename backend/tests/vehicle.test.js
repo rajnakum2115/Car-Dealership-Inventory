@@ -95,7 +95,7 @@ describe("GET /api/vehicles/search", () => {
 
 describe("PUT /api/vehicles/:id", () => {
 
-    it("should update a vehicle", async () => {
+    it("should keep integer prices stable when the input is adjusted", async () => {
 
         // Register user
         const email = `raj${Date.now()}@gmail.com`;
@@ -145,14 +145,23 @@ describe("PUT /api/vehicles/:id", () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.price).toBe(4500000);
 
-        // Regression: whole-rupee prices must not drift (e.g. 250000 → 249998).
+        // Regression: whole-rupee prices must not drift when the browser sends
+        // numeric input in a floating-point-like form.
         const priceFix = await request(app)
             .put(`/api/vehicles/${vehicleId}`)
             .set("Authorization", `Bearer ${token}`)
-            .send({ price: 250000 });
+            .send({ price: 250000.4 });
 
         expect(priceFix.statusCode).toBe(200);
         expect(priceFix.body.price).toBe(250000);
+
+        const priceStep = await request(app)
+            .put(`/api/vehicles/${vehicleId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({ price: 250001.6 });
+
+        expect(priceStep.statusCode).toBe(200);
+        expect(priceStep.body.price).toBe(250002);
 
     });
 

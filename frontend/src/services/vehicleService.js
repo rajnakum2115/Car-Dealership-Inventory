@@ -50,6 +50,11 @@ export const createVehicle = async (vehicleData) => {
     // Let the browser set `Content-Type` for FormData (boundary included).
     const config = vehicleData instanceof FormData ? {} : {};
 
+    console.log("[Vehicle Price] createVehicle request", {
+        isFormData: vehicleData instanceof FormData,
+        payload: vehicleData
+    });
+
     const response = await api.post("/vehicles", vehicleData, config);
 
     return response.data;
@@ -61,6 +66,12 @@ export const updateVehicle = async (id, vehicleData) => {
 
     // Let the browser set `Content-Type` for FormData (boundary included).
     const config = vehicleData instanceof FormData ? {} : {};
+
+    console.log("[Vehicle Price] updateVehicle request", {
+        id,
+        isFormData: vehicleData instanceof FormData,
+        payload: vehicleData
+    });
 
     const response = await api.put(`/vehicles/${id}`, vehicleData, config);
 

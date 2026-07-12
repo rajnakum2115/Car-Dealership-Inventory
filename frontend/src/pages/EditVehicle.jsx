@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -30,6 +30,16 @@ function EditVehicle() {
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+
+    const _prevPrice = useRef(vehicle.price);
+
+    useEffect(() => {
+        if (_prevPrice.current !== vehicle.price) {
+            console.log("[Vehicle Price] state change detected", { prev: _prevPrice.current, next: vehicle.price });
+            console.trace();
+            _prevPrice.current = vehicle.price;
+        }
+    }, [vehicle.price]);
 
     // Feature 5 — image file upload
     const [imageFile, setImageFile] = useState(null);
@@ -65,10 +75,38 @@ function EditVehicle() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log("[Vehicle] field change", { name, value, currentPrice: vehicle.price });
 
         setVehicle((prev) => ({
             ...prev,
             [name]: value
+        }));
+    };
+
+    const handlePriceChange = (e) => {
+        const rawValue = e.target.value;
+        const sanitizedValue = parsePriceInput(rawValue);
+
+        console.log("[Vehicle Price] edit form input", { rawValue, sanitizedValue });
+
+        setVehicle((prev) => ({
+            ...prev,
+            price: sanitizedValue
+        }));
+    };
+
+    const handlePriceFocus = (e) => {
+        console.log("[Vehicle Price] edit focus", { value: e.target.value });
+    };
+
+    const handlePriceBlur = (e) => {
+        const raw = e.target.value;
+        const sanitized = parsePriceInput(raw);
+        console.log("[Vehicle Price] edit blur", { raw, sanitized });
+
+        setVehicle((prev) => ({
+            ...prev,
+            price: sanitized
         }));
     };
 
@@ -91,6 +129,13 @@ function EditVehicle() {
             const price = parsePriceInput(vehicle.price);
             const quantity = Number(vehicle.quantity);
             const year = vehicle.year ? Number(vehicle.year) : undefined;
+
+            console.log("[Vehicle Price] edit submit state", {
+                rawPrice: vehicle.price,
+                parsedPrice: price,
+                quantity,
+                year
+            });
 
             // Feature 5 — if an image file was selected, send as FormData.
             // Otherwise send a JSON body so the existing image is preserved.
@@ -232,8 +277,11 @@ function EditVehicle() {
                             name="price"
                             min="0"
                             step="1"
+                            inputMode="numeric"
                             value={vehicle.price ?? ""}
-                            onChange={handleChange}
+                            onChange={handlePriceChange}
+                            onFocus={handlePriceFocus}
+                            onBlur={handlePriceBlur}
                             placeholder="Price"
                             className="border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                         />

@@ -52,23 +52,19 @@ function LatestVehicles() {
 
             <div className="max-w-7xl mx-auto px-6">
 
-                <div className="flex justify-between items-center mb-10">
+                <div className="text-center mb-10">
 
-                    <div>
+                    <h2 className="text-4xl font-bold text-gray-800">
 
-                        <h2 className="text-4xl font-bold">
+                        Latest Vehicles
 
-                            Latest Vehicles
+                    </h2>
 
-                        </h2>
+                    <p className="text-gray-500 mt-2">
 
-                        <p className="text-gray-500 mt-2">
+                        Check out our newest arrivals.
 
-                            Check out our newest arrivals.
-
-                        </p>
-
-                    </div>
+                    </p>
 
                 </div>
 

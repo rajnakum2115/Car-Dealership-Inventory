@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Spinner from "../components/Spinner";
 
-import { getMyOrders } from "../services/purchaseService";
+import { getMyOrders, getAllOrders, updateOrder, deleteOrder } from "../services/purchaseService";
 import getImageSrc from "../utils/imageUrl";
 import { formatINR } from "../utils/price";
 
@@ -13,6 +14,9 @@ function MyOrders() {
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [editedQuantities, setEditedQuantities] = useState({});
+    const [processingOrderId, setProcessingOrderId] = useState(null);
+    const { isAdmin } = useAuth();
 
     useEffect(() => {
         fetchOrders();
@@ -22,8 +26,14 @@ function MyOrders() {
 
         try {
 
-            const data = await getMyOrders();
+            const data = isAdmin ? await getAllOrders() : await getMyOrders();
             setOrders(data);
+            setEditedQuantities(
+                data.reduce((acc, order) => {
+                    acc[order._id] = order.quantity;
+                    return acc;
+                }, {})
+            );
 
         } catch (error) {
 
@@ -35,6 +45,48 @@ function MyOrders() {
 
         }
 
+    };
+
+    const handleQuantityChange = (orderId, value) => {
+        setEditedQuantities((prev) => ({
+            ...prev,
+            [orderId]: value
+        }));
+    };
+
+    const handleUpdateOrder = async (orderId) => {
+        const newQuantity = Number(editedQuantities[orderId]);
+
+        if (!newQuantity || newQuantity < 1) {
+            toast.error("Quantity must be at least 1");
+            return;
+        }
+
+        setProcessingOrderId(orderId);
+
+        try {
+            await updateOrder(orderId, { quantity: newQuantity });
+            toast.success("Order updated successfully");
+            await fetchOrders();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update order");
+        } finally {
+            setProcessingOrderId(null);
+        }
+    };
+
+    const handleCancelOrder = async (orderId) => {
+        setProcessingOrderId(orderId);
+
+        try {
+            await deleteOrder(orderId);
+            toast.success("Order cancelled successfully");
+            await fetchOrders();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to cancel order");
+        } finally {
+            setProcessingOrderId(null);
+        }
     };
 
     return (
@@ -90,24 +142,66 @@ function MyOrders() {
                                             {order.vehicleSnapshot?.brand || ""}
                                         </p>
 
-                                        <div className="mt-4 space-y-2">
+                                            {isAdmin && (
+                                                <p className="text-gray-700 mt-1 font-medium">
+                                                    Buyer: {order.buyerName || order.userId?.name || "Unknown"}
+                                                </p>
+                                            )}
 
-                                            <p className="text-blue-600 font-bold text-lg">
-                                                ₹ {formatINR(order.price)}
-                                            </p>
+<div className="mt-4 space-y-3">
 
-                                            <p className="text-gray-600">
+                                        <p className="text-blue-600 font-bold text-lg">
+                                            ₹ {formatINR(order.price)}
+                                        </p>
+
+                                        {!isAdmin ? (
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-gray-600 font-medium">
+                                                    Quantity
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value={editedQuantities[order._id] ?? order.quantity}
+                                                    onChange={(e) => handleQuantityChange(order._id, e.target.value)}
+                                                    className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="text-gray-700">
                                                 <strong>Quantity:</strong> {order.quantity}
-                                            </p>
+                                            </div>
+                                        )}
 
-                                            <p className="text-gray-500 text-sm">
-                                                Purchased on{" "}
-                                                {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric"
-                                                })}
-                                            </p>
+                                        <p className="text-gray-500 text-sm">
+                                            Purchased on{" "}
+                                            {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                        </p>
+
+                                        {!isAdmin && (
+                                            <div className="flex flex-col gap-3 pt-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleUpdateOrder(order._id)}
+                                                    disabled={processingOrderId === order._id}
+                                                    className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition disabled:opacity-60"
+                                                >
+                                                    {processingOrderId === order._id ? "Updating..." : "Update Quantity"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleCancelOrder(order._id)}
+                                                    disabled={processingOrderId === order._id}
+                                                    className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition disabled:opacity-60"
+                                                >
+                                                    {processingOrderId === order._id ? "Processing..." : "Cancel Order"}
+                                                </button>
+                                            </div>
+                                        )}
 
                                         </div>
 

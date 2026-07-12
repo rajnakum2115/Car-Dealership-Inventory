@@ -1,18 +1,23 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
-import { registerUser } from "../services/authService";
+import { registerUser, loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
 
     const navigate = useNavigate();
+
+    const { login } = useAuth();
 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: ""
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -29,9 +34,20 @@ function Register() {
 
             await registerUser(formData);
 
-            toast.success("Registration Successful");
+            // After registration, automatically login the user and set auth state
+            const loginResp = await loginUser({
+                email: formData.email,
+                password: formData.password
+            });
 
-            navigate("/login");
+            if (loginResp.token && loginResp.user) {
+                login(loginResp.token, loginResp.user);
+            }
+
+            toast.success("Registration Successful — logged in");
+
+            // Redirect to Home
+            navigate("/");
 
         } catch (error) {
 
@@ -42,13 +58,27 @@ function Register() {
 
     return (
 
-        <div className="min-h-screen bg-slate-100 flex justify-center items-center">
+        <div className="min-h-screen bg-slate-100 flex flex-col">
 
-            <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+            <header className="px-6 py-6">
+                <div className="flex items-center gap-3">
+                    <img
+                        src="/images/logo.jpg"
+                        alt="CarDealer Logo"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-slate-200 shadow-sm"
+                    />
+                    <span className="text-2xl font-bold text-slate-900">
+                        CarDealer
+                    </span>
+                </div>
+            </header>
 
-                <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
-                    Create Account
-                </h1>
+            <div className="flex-1 flex justify-center items-center">
+                <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+
+                    <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+                        Create Account
+                    </h1>
 
                 <form
                     onSubmit={handleSubmit}
@@ -75,15 +105,29 @@ function Register() {
                         className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            className="w-full border rounded-lg p-3 pr-12 outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-slate-500 hover:text-slate-800"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? (
+                                <EyeOff className="h-5 w-5" />
+                            ) : (
+                                <Eye className="h-5 w-5" />
+                            )}
+                        </button>
+                    </div>
 
                     <button
                         type="submit"
@@ -106,6 +150,8 @@ function Register() {
                     </Link>
 
                 </p>
+
+                </div>
 
             </div>
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -14,6 +15,8 @@ function VehicleDetails() {
 
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const { isAdmin } = useAuth();
 
     const [vehicle, setVehicle] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -65,6 +68,11 @@ function VehicleDetails() {
     }
 
     const handlePurchase = async () => {
+
+        if (isAdmin) {
+            toast.error("Admins are not allowed to make purchases");
+            return;
+        }
 
         setPurchasing(true);
 
@@ -167,7 +175,7 @@ function VehicleDetails() {
 
                             <button
                                 onClick={handlePurchase}
-                                disabled={vehicle.quantity === 0 || purchasing}
+                                disabled={vehicle.quantity === 0 || purchasing || isAdmin}
                                 className={`mt-10 px-10 py-4 rounded-lg text-lg text-white transition
                                     ${vehicle.quantity === 0
                                         ? "bg-gray-400 cursor-not-allowed"

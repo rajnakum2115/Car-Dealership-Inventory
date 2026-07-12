@@ -1,26 +1,34 @@
 /**
  * Parses a price value into a whole-number rupee amount.
- * Strips commas/currency symbols and rounds to avoid float drift (e.g. 249999.99999999994 → 250000).
+ * Strips commas/currency symbols and rounds to avoid float drift
+ * that can appear when browsers emit floating-point values from number inputs.
  */
 const parsePrice = (value) => {
     if (value === undefined || value === null || value === "") {
         return undefined;
     }
 
-    const cleaned = String(value).trim().replace(/[₹,\s]/g, "");
+    const cleaned = String(value).trim().replace(/[^0-9.-]/g, "");
 
-    if (cleaned === "") {
+    if (cleaned === "" || cleaned === "." || cleaned === "-") {
         return undefined;
     }
 
-    // Parse as float to accept decimal input, then round to whole rupees.
-    const num = parseFloat(cleaned);
+    const num = Number(cleaned);
 
-    if (Number.isNaN(num)) {
+    if (!Number.isFinite(num)) {
         throw new Error("Invalid price");
     }
 
-    return Math.round(num);
+    const rounded = Math.round(num);
+    console.log("[Vehicle Price] parsePrice", {
+        input: value,
+        cleaned,
+        numericValue: num,
+        roundedValue: rounded
+    });
+
+    return rounded;
 };
 
 export default parsePrice;

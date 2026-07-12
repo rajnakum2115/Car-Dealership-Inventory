@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import Navbar from "../components/Navbar";
@@ -13,10 +14,11 @@ function AdminOrders() {
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [location.key]);
 
     const fetchOrders = async () => {
 
@@ -103,7 +105,7 @@ function AdminOrders() {
                                             </td>
 
                                             <td className="py-4">
-                                                <p className="font-medium">{order.userId?.name || "Unknown"}</p>
+                                                <p className="font-medium">{order.buyerName || order.userId?.name || "Unknown"}</p>
                                                 <p className="text-sm text-gray-500">{order.userId?.email || ""}</p>
                                             </td>
 

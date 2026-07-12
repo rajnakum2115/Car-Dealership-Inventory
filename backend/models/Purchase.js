@@ -22,6 +22,11 @@ const purchaseSchema = new mongoose.Schema(
             image: { type: String, default: "" }
         },
 
+        buyerName: {
+            type: String,
+            default: ""
+        },
+
         price: {
             type: Number,
             required: true,

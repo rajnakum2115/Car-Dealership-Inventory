@@ -159,10 +159,6 @@ npm run preview
 
 ![Vehicle edit](frontend/public/images/Vehicles_edit.png)
 
-**Add vehicles page**
-
-![Add vehicles](frontend/public/images/Add_Vehicles.png)
-
 **Restock vehicles page**
 
 ![Restock vehicles](frontend/public/images/Restock_Vehicles.png)
